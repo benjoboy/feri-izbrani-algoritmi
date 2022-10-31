@@ -127,7 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PrimeNumberGenerator.cpp" />
     <ClCompile Include="prime_numbers.cpp" />
+    <ClCompile Include="RandomGenerator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PrimeNumberGenerator.h" />
+    <ClInclude Include="RandomGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
