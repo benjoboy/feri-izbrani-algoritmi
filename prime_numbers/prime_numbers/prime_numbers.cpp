@@ -1,10 +1,13 @@
 #include <iostream>
 #include "PrimeNumberGenerator.h"
 #include <string>
+#include <chrono>
 
 using namespace std;
 
 char menu();
+void testMillerRabin(PrimeNumberGenerator& g, int numOfBits, int s);
+void testNaive(PrimeNumberGenerator& g, int numOfBits);
 
 int main()
 {
@@ -34,10 +37,13 @@ int main()
 			cin >> s;
 			break;
 		case '4':
-			cout  << "---------------------" << endl;
-
-			cout << p.millerRabin(numOfBits, s) << endl <<endl;
-
+			cout << "---------------------" << endl;
+			cout << p.millerRabin(numOfBits, s) << endl << endl;
+			break;
+		case '5':
+			testNaive(p, numOfBits);
+		break; case '6':
+			testMillerRabin(p, numOfBits, s);
 			break;
 		case '0':
 			running = 0;
@@ -56,6 +62,8 @@ char menu() {
 	cout << "2) Naivna metoda\n";
 	cout << "3) Nastavi s za miller-rabinovo metodo\n";
 	cout << "4) Miller-robinova metoda\n";
+	cout << "5) Testiraj naivno metodo\n";
+	cout << "6) Testiraj miller rabinovo metodo\n";
 	cout << "0) Konec\n";
 	cout << endl;
 	cout << "Izbira: ";
@@ -69,4 +77,32 @@ char menu() {
 		}
 	} while (selection.length() == 0);
 	return selection[0];
+}
+
+void testMillerRabin(PrimeNumberGenerator& g, int numOfBits, int s) {
+	int numOfTests = 1000;
+	auto start = chrono::high_resolution_clock::now();
+	for (int i = 0; i < numOfTests; i++) {
+		g.millerRabin(numOfBits, s);
+		//cout << g.millerRabin(numOfBits, s) << endl;
+	}
+	auto stop = chrono::high_resolution_clock::now();
+	auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+
+	cout << "MillerRabin average: " << duration.count() / 100 << endl;
+}
+
+void testNaive(PrimeNumberGenerator& g, int numOfBits) {
+	{
+		int numOfTests = 1000;
+		auto start = chrono::high_resolution_clock::now();
+		for (int i = 0; i < numOfTests; i++) {
+			g.naive(numOfBits);
+			//cout << g.naive(numOfBits) << endl;
+		}
+		auto stop = chrono::high_resolution_clock::now();
+		auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+
+		cout << "Naive average: " << duration.count()/100 << endl;
+	}
 }

@@ -3,12 +3,12 @@ class RandomGenerator
 {
 public:
 	RandomGenerator();
-	unsigned int getRandom(unsigned int min, unsigned int max);
-	unsigned int lcg();
-	unsigned int m = 4294967295;
-	unsigned int a = 69069;
-	unsigned int b = 0;
-	unsigned int rn = 1;
+	unsigned long long getRandom(unsigned long long min, unsigned long long max);
+	unsigned long long lcg();
+	unsigned long long m = 4294967295;
+	unsigned long long a = 69069;
+	unsigned long long b = 0;
+	unsigned long long rn = 1;
 };
 
 

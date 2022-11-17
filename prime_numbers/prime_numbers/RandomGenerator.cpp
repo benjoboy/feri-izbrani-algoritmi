@@ -8,12 +8,12 @@ RandomGenerator::RandomGenerator() {
 	rn = 1;
 }
 
-unsigned int RandomGenerator::lcg() {
+unsigned long long RandomGenerator::lcg() {
 	rn = (a * rn + b) % m;
 	//std::cout << rn << std::endl;
 	return rn;
 }
 
-unsigned int RandomGenerator::getRandom(unsigned int min, unsigned int max) {
+unsigned long long RandomGenerator::getRandom(unsigned long long min, unsigned long long max) {
 	return  (min + lcg()) % (max - min + 1);
 }

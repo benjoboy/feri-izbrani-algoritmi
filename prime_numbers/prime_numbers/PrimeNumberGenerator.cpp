@@ -5,9 +5,9 @@
 
 using namespace std;
 
-unsigned int PrimeNumberGenerator::naive(int numOfBits) {
+unsigned long long PrimeNumberGenerator::naive(int numOfBits) {
 	while (true) {
-		unsigned int p = getRandom(2, pow(2, numOfBits)); //not sure
+		unsigned long long p = getRandom(pow(2, numOfBits - 1), pow(2, numOfBits) - 1);
 
 		if (p % 2 == 0) {
 			p++;
@@ -18,28 +18,24 @@ unsigned int PrimeNumberGenerator::naive(int numOfBits) {
 	}
 }
 
-bool PrimeNumberGenerator::naiveTest(unsigned int p) {
+bool PrimeNumberGenerator::naiveTest(unsigned long long p) {
 	while (true) {
-		unsigned int j = 3;
+		unsigned long long j = 3;
 
 		while (j < sqrt(p))
 		{
 			if (p % j == 0) {
-				break;
+				return false;
 			}
 			j += 2;
 		}
-
-		if (j > sqrt(p)) {
-			return true;
-		}
-		else return false;
+		return true;
 	}
 }
 
-unsigned int PrimeNumberGenerator::millerRabin(int numOfBits, int s) {
+unsigned long long PrimeNumberGenerator::millerRabin(int numOfBits, int s) {
 	while (true) {
-		unsigned int p = getRandom(2, pow(2, numOfBits)); //not sure
+		unsigned long long p = getRandom(pow(2, numOfBits - 1), pow(2, numOfBits) - 1); //not sure
 		if (p % 2 == 0) {
 			p++;
 		}
@@ -50,31 +46,30 @@ unsigned int PrimeNumberGenerator::millerRabin(int numOfBits, int s) {
 	}
 }
 
-bool PrimeNumberGenerator::millerRabinTest(unsigned int p, int s) {
+bool PrimeNumberGenerator::millerRabinTest(unsigned long long p, int s) {
 	if (p <= 3)
 		return true;
 	if (p % 2 == 0)
 		return false;
 
 	auto tuple = getFactors(p);
-	unsigned int d = get<0>(tuple);
-	unsigned int k = get<1>(tuple);
+	unsigned long long d = get<0>(tuple);
+	unsigned long long k = get<1>(tuple);
 
-	for (int j = 1; j < s; j++) {
-		unsigned int a = getRandom(2, p - 2);
+	for (int j = 1; j <= s; j++) {
+		unsigned long long a = getRandom(2, p - 2);
 
-		unsigned int x = modularExp(a, d, p);
+		unsigned long long x = modularExp(a, d, p);
 		if (x == 1) {
-			return true;
+			continue;
 		}
-		for (int r = 1; r < s; r++) {
-			x = modularExp(x, 2, p);
-			if (x == 1) {
-				return false;
-			}
+		for (int i = 0; i < k; i++) {
 			if (x == p - 1) {
 				break;
 			}
+
+			x = modularExp(x, 2, p);
+
 		}
 		if (x != p - 1) {
 			return false;
@@ -83,10 +78,10 @@ bool PrimeNumberGenerator::millerRabinTest(unsigned int p, int s) {
 	return true;
 }
 
-tuple<unsigned int, unsigned int> PrimeNumberGenerator::getFactors(unsigned int p) {
-	unsigned int  d = p - 1;
-	unsigned int k = 0;
-	while (d % 2 != 0) {
+tuple<unsigned long long, unsigned long long> PrimeNumberGenerator::getFactors(unsigned long long p) {
+	unsigned long long  d = p - 1;
+	unsigned long long k = 0;
+	while (d % 2 == 0) {
 		d /= 2;
 		k++;
 	}
@@ -94,19 +89,16 @@ tuple<unsigned int, unsigned int> PrimeNumberGenerator::getFactors(unsigned int 
 }
 
 
-unsigned int PrimeNumberGenerator::modularExp(unsigned int num, unsigned int pow, unsigned int mod)
+unsigned long long PrimeNumberGenerator::modularExp(unsigned long long num, unsigned long long pow, unsigned long long mod)
 {
-
-	int d = 1;
-	while (pow > 0) {
-
-
-		if ((pow & 1) == 1) {
-			d = ((d % mod) * (num % mod)) % mod;
-		}
-		num = ((num % mod) * (num % mod)) % mod;
-
+	unsigned long long d = 1;
+	num = num % mod;
+	while (pow > 0)
+	{
+		if (pow & 1)
+			d = (d * num) % mod;
 		pow = pow >> 1;
+		num = (num * num) % mod;
 	}
 	return d;
 }

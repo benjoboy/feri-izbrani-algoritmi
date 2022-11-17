@@ -4,11 +4,11 @@
 class PrimeNumberGenerator: RandomGenerator
 {
 public:
-	unsigned int naive(int numOfBits);
-	bool naiveTest(unsigned int p);
-	unsigned int millerRabin(int numOfBits, int s); 
-	bool millerRabinTest(unsigned int p, int s);
-	std::tuple<unsigned int, unsigned int> getFactors(unsigned int p);
-	unsigned int modularExp(unsigned int a, unsigned int b, unsigned int n);
+	unsigned long long naive(int numOfBits);
+	bool naiveTest(unsigned long long p);
+	unsigned long long millerRabin(int numOfBits, int s);
+	bool millerRabinTest(unsigned long long p, int s);
+	std::tuple<unsigned long long, unsigned long long> getFactors(unsigned long long p);
+	unsigned long long modularExp(unsigned long long a, unsigned long long b, unsigned long long n);
 };
 
