@@ -1,13 +1,52 @@
 #include "RsaCrypt.h"
 #include "RandomGenerator.h"
 #include <iostream>
+#include <vector>
+#include <math.h> 
+#include "BinReader.h"
+#include "BinWriter.h"
+
+template <typename T>
+T modpow(T base, T exp, T modulus) {
+	base %= modulus;
+	T result = 1;
+	while (exp > 0) {
+		if (exp & 1) result = (result * base) % modulus;
+		base = (base * base) % modulus;
+		exp >>= 1;
+	}
+	return result;
+}
 
 RsaCrypt::RsaCrypt()
 {
-	generateKeys();
 }
 
-void RsaCrypt::generateKeys() {
+void RsaCrypt::writeKeysToFile() {
+	std::ofstream myfile;
+	myfile.open("privkey.txt");
+	myfile << d << " " << n;
+	myfile.close();
+	myfile.open("pubkey.txt");
+	myfile << e << " " << n;
+	myfile.close();
+
+}
+
+void RsaCrypt::getKeysFromFile() {
+	std::ifstream myfile;
+	myfile.open("privkey.txt");
+	myfile >> d >> n;
+	myfile.close();
+	myfile.open("pubkey.txt");
+	myfile >> e;
+	myfile.close();
+
+	std::cout << "e: " << e << "\nn: " << n << "\nd: " << d << std::endl;
+
+}
+
+void RsaCrypt::generateKeys(int keyLength) {
 	{
 		unsigned long long p = primeGenerator.millerRabin(keyLength, 10);
 		unsigned long long q = primeGenerator.millerRabin(keyLength, 10);
@@ -29,9 +68,12 @@ void RsaCrypt::generateKeys() {
 			std::cout << "n: " << n << std::endl;
 		
 		}
+
+		std::cout << "e: " << e << "\nn: " << n << "\nd: " << d;
 		this->e = e;
 		this->n = n;
 		this->d = d;
+		writeKeysToFile();
 	}
 }
 
@@ -78,4 +120,59 @@ unsigned long long RsaCrypt::extendedEuclid(unsigned long long a, unsigned long 
 		return d;
 	}
 	
+}
+
+void RsaCrypt::encryptFile() {
+
+	double numOfBitsReal = log2(this->n);
+	std::cout << "numOfBits: " << numOfBitsReal << std::endl;
+	int numOfBitsLow = floor(numOfBitsReal);
+	int numOfBitsHigh = ceil(numOfBitsReal);
+	int numOfBitsIn;
+	int numOfBitsOut;
+	
+	numOfBitsIn = numOfBitsLow;
+	numOfBitsOut = numOfBitsHigh;
+
+	BinReader in("in.txt");
+	BinWriter out("encrypted.txt");
+
+	while (in.isOpen()) {
+		bool end;
+		unsigned long long x = in.readNumOfBits(numOfBitsIn, end);
+		if (end)
+			break;
+		std::cout << "x= " << x << std::endl;
+		x = modpow(x, this->e, this->n);
+		std::cout << "c= " << x << std::endl;
+		out.writeNumOfBits(x, numOfBitsOut);
+
+	}
+}
+
+void RsaCrypt::decryptFile() {
+	double numOfBitsReal = log2(this->n);
+	std::cout << "numOfBits: " << numOfBitsReal << std::endl;
+	int numOfBitsLow = floor(numOfBitsReal);
+	int numOfBitsHigh = ceil(numOfBitsReal);
+	int numOfBitsIn;
+	int numOfBitsOut;
+
+	numOfBitsIn = numOfBitsLow;
+	numOfBitsOut = numOfBitsHigh;
+
+	BinReader in("encrypted.txt");
+	BinWriter out("decrypted.txt");
+
+	while (in.isOpen()) {
+		bool end;
+		unsigned long long x = in.readNumOfBits(numOfBitsOut, end);
+		if (end)
+			break;
+		std::cout << x << "\n";
+		x = modpow(x, this->d, this->n);
+		std::cout << x << "\n";
+		out.writeNumOfBits(x, numOfBitsIn);
+	}
+
 }

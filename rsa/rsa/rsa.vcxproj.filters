@@ -27,6 +27,12 @@
     <ClCompile Include="RsaCrypt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BinReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BinWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PrimeNumberGenerator.h">
@@ -36,6 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RsaCrypt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
