@@ -5,6 +5,7 @@
 #include <math.h> 
 #include "BinReader.h"
 #include "BinWriter.h"
+#include <string>
 
 template <typename T>
 T modpow(T base, T exp, T modulus) {
@@ -20,6 +21,9 @@ T modpow(T base, T exp, T modulus) {
 
 RsaCrypt::RsaCrypt()
 {
+	e = 0;
+	d = 0;
+	n = 0;
 }
 
 void RsaCrypt::writeKeysToFile() {
@@ -42,7 +46,6 @@ void RsaCrypt::getKeysFromFile() {
 	myfile >> e;
 	myfile.close();
 
-	std::cout << "e: " << e << "\nn: " << n << "\nd: " << d << std::endl;
 
 }
 
@@ -69,7 +72,6 @@ void RsaCrypt::generateKeys(int keyLength) {
 		
 		}
 
-		std::cout << "e: " << e << "\nn: " << n << "\nd: " << d;
 		this->e = e;
 		this->n = n;
 		this->d = d;
@@ -122,7 +124,7 @@ unsigned long long RsaCrypt::extendedEuclid(unsigned long long a, unsigned long 
 	
 }
 
-void RsaCrypt::encryptFile() {
+void RsaCrypt::encryptFile(std::string filename) {
 
 	double numOfBitsReal = log2(this->n);
 	std::cout << "numOfBits: " << numOfBitsReal << std::endl;
@@ -134,25 +136,22 @@ void RsaCrypt::encryptFile() {
 	numOfBitsIn = numOfBitsLow;
 	numOfBitsOut = numOfBitsHigh;
 
-	BinReader in("in.txt");
-	BinWriter out("encrypted.txt");
+	BinReader in(filename);
+	BinWriter out("encrypted.bin");
 
 	while (in.isOpen()) {
 		bool end;
 		unsigned long long x = in.readNumOfBits(numOfBitsIn, end);
 		if (end)
 			break;
-		std::cout << "x= " << x << std::endl;
 		x = modpow(x, this->e, this->n);
-		std::cout << "c= " << x << std::endl;
 		out.writeNumOfBits(x, numOfBitsOut);
 
 	}
 }
 
-void RsaCrypt::decryptFile() {
+void RsaCrypt::decryptFile(std::string filename) {
 	double numOfBitsReal = log2(this->n);
-	std::cout << "numOfBits: " << numOfBitsReal << std::endl;
 	int numOfBitsLow = floor(numOfBitsReal);
 	int numOfBitsHigh = ceil(numOfBitsReal);
 	int numOfBitsIn;
@@ -161,17 +160,15 @@ void RsaCrypt::decryptFile() {
 	numOfBitsIn = numOfBitsLow;
 	numOfBitsOut = numOfBitsHigh;
 
-	BinReader in("encrypted.txt");
-	BinWriter out("decrypted.txt");
+	BinReader in("encrypted.bin");
+	BinWriter out(filename);
 
 	while (in.isOpen()) {
 		bool end;
 		unsigned long long x = in.readNumOfBits(numOfBitsOut, end);
 		if (end)
 			break;
-		std::cout << x << "\n";
 		x = modpow(x, this->d, this->n);
-		std::cout << x << "\n";
 		out.writeNumOfBits(x, numOfBitsIn);
 	}
 

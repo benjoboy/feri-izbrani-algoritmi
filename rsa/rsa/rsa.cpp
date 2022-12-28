@@ -14,6 +14,7 @@ int main()
 	char izbira;
 	int numOfBits = 8;
 	int s = 3;
+	string filename;
 
 
 	while (running) {
@@ -30,10 +31,14 @@ int main()
 			rsaCrypt.getKeysFromFile();
 			break;
 		case '3':
-			rsaCrypt.encryptFile();
+			cout << "Enter filename: \n";
+			cin >> filename;
+			rsaCrypt.encryptFile(filename);
 			break;
 		case '4':
-			rsaCrypt.decryptFile();
+			cout << "Enter out filename: \n";
+			cin >> filename;
+			rsaCrypt.decryptFile(filename);
 			break;
 		case '5':
 		break; case '6':

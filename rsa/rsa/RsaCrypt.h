@@ -1,6 +1,6 @@
 #pragma once
 #include "PrimeNumberGenerator.h"
-
+#include <string>
 
 class RsaCrypt {
 private:
@@ -16,6 +16,6 @@ public:
 	unsigned long long modularLinearEquationSolver(unsigned long long a, unsigned long long b, unsigned long long n);
 	void writeKeysToFile();
 	void getKeysFromFile();
-	void encryptFile();
-	void decryptFile();
+	void encryptFile(std::string filename);
+	void decryptFile(std::string filename);
 };
