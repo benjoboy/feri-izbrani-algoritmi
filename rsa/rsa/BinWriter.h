@@ -2,6 +2,9 @@
 
 #include <fstream>
 #include <string>
+#include <boost/multiprecision/cpp_int.hpp>
+
+using namespace boost::multiprecision;
 
 class BinWriter
 {
@@ -18,7 +21,7 @@ public:
 	void writeInt(int i);
 	void writeFloat(float f);
 	void setX(int i);
-	void writeNumOfBits(unsigned long long out, int numOfBits);
+	void writeNumOfBits(cpp_int out, cpp_int numOfBits);
 
 };
 

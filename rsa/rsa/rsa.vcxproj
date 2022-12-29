@@ -135,6 +135,7 @@
     <ClCompile Include="RsaCrypt.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BigInt.hpp" />
     <ClInclude Include="BinReader.h" />
     <ClInclude Include="BinWriter.h" />
     <ClInclude Include="PrimeNumberGenerator.h" />

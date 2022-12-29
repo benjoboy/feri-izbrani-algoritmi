@@ -2,6 +2,9 @@
 
 #include <fstream>
 #include <string>
+#include <boost/multiprecision/cpp_int.hpp>
+
+using namespace boost::multiprecision;
 
 class BinReader
 {
@@ -19,6 +22,6 @@ public:
 	int readInt();
 	float readFloat();
 	bool isOpen();
-	unsigned long long readNumOfBits(int numOfBits, bool &end);
+	cpp_int readNumOfBits(cpp_int numOfBits, bool &end);
 };
 

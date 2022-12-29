@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 
+
 BinReader::BinReader(std::string in){
 	ifd.open(in, std::ios::binary);
 }
@@ -70,11 +71,11 @@ bool BinReader::isOpen() {
 	return ifd.is_open();
 }
 
-unsigned long long BinReader::readNumOfBits(int numOfBits, bool& end) {
-	unsigned long long number = 0;
+cpp_int BinReader::readNumOfBits(cpp_int numOfBits, bool& end) {
+	cpp_int number(0);
 	end = false;
 	
-	for (int i = numOfBits - 1; i >= 0; i--) {
+	for (cpp_int i = numOfBits - 1; i >= 0; i--) {
 	
 		bool endBit;
 		bool bit = readBit(endBit);
@@ -83,11 +84,11 @@ unsigned long long BinReader::readNumOfBits(int numOfBits, bool& end) {
 			return number;
 		}
 		if (bit) {
-			number |= 1ULL << i;
+			number = bit_set(number, unsigned(i));
 		}
 		else
 		{
-			number &= ~(1ULL << i);
+			//number &= ~(cpp_int(1ULL) << i);
 		}
 	}
 	return number;

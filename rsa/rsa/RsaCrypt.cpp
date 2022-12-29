@@ -1,11 +1,14 @@
 #include "RsaCrypt.h"
 #include "RandomGenerator.h"
-#include <iostream>
-#include <vector>
-#include <math.h> 
 #include "BinReader.h"
 #include "BinWriter.h"
-#include <string>
+#include <iostream>
+#include <vector>
+
+#include <boost/multiprecision/cpp_bin_float.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
+
+using namespace boost::multiprecision;
 
 template <typename T>
 T modpow(T base, T exp, T modulus) {
@@ -51,25 +54,26 @@ void RsaCrypt::getKeysFromFile() {
 
 void RsaCrypt::generateKeys(int keyLength) {
 	{
-		unsigned long long p = primeGenerator.millerRabin(keyLength, 10);
-		unsigned long long q = primeGenerator.millerRabin(keyLength, 10);
-		unsigned long long n = p * q;
-		unsigned long long phi = (p - 1) * (q - 1);
-		unsigned long long e = primeGenerator.getRandom(1, phi - 1);
+		cpp_int p = primeGenerator.millerRabin(keyLength, 10);
+		cpp_int q = primeGenerator.millerRabin(keyLength, 10);
+		cpp_int n = p * q;
+		cpp_int phi = (p - 1) * (q - 1);
+		cpp_int e = primeGenerator.getRandom(1, phi - 1);
 		while (true) {
 			e = primeGenerator.getRandom(1, phi - 1);
+			std::cout << e << std::endl;
 			if (gcd(e, phi) == 1)
-				break;	
+				break;
 		}
-		unsigned long long d = modularLinearEquationSolver(e, 1, phi);
-		
-		if( e<=1 || d == NULL || n< 1)
+		cpp_int d = modularLinearEquationSolver(e, 1, phi);
+
+		if (e <= 1 || d == NULL || n < 1)
 		{
 			std::cout << "something is wrong with keys generation" << std::endl;
 			std::cout << "e: " << e << std::endl;
 			std::cout << "d: " << d << std::endl;
 			std::cout << "n: " << n << std::endl;
-		
+
 		}
 
 		this->e = e;
@@ -79,7 +83,7 @@ void RsaCrypt::generateKeys(int keyLength) {
 	}
 }
 
-unsigned long long RsaCrypt::gcd(unsigned long long a, unsigned long long b) {
+cpp_int RsaCrypt::gcd(cpp_int a, cpp_int b) {
 	{
 		if (b == 0) {
 			return a;
@@ -90,13 +94,13 @@ unsigned long long RsaCrypt::gcd(unsigned long long a, unsigned long long b) {
 	}
 }
 
-unsigned long long RsaCrypt::modularLinearEquationSolver(unsigned long long a, unsigned long long b, unsigned long long n) {
-	unsigned long long x, y;
-	unsigned long long d = extendedEuclid(a, n, x, y);
+cpp_int RsaCrypt::modularLinearEquationSolver(cpp_int a, cpp_int b, cpp_int n) {
+	cpp_int x, y;
+	cpp_int d = extendedEuclid(a, n, x, y);
 	if (d % b == 0) {
 		x = (x * (b / d)) % n;
 		for (int i = 0; i < d; i++) {
-			unsigned long long xe = (x + i * (n / d)) % n;
+			cpp_int xe = (x + i * (n / d)) % n;
 			if (xe < 0)
 				return xe + n;
 			else
@@ -108,40 +112,38 @@ unsigned long long RsaCrypt::modularLinearEquationSolver(unsigned long long a, u
 	}
 }
 
-unsigned long long RsaCrypt::extendedEuclid(unsigned long long a, unsigned long long b, unsigned long long& x, unsigned long long& y) {
+cpp_int RsaCrypt::extendedEuclid(cpp_int a, cpp_int b, cpp_int& x, cpp_int& y) {
 	if (b == 0) {
 		x = 1;
 		y = 0;
 		return a;
 	}
 	else {
-		unsigned long long x1, y1;
-		unsigned long long d = extendedEuclid(b, a % b, x1, y1);
+		cpp_int x1, y1;
+		cpp_int d = extendedEuclid(b, a % b, x1, y1);
 		x = y1;
 		y = x1 - y1 * (a / b);
 		return d;
 	}
-	
+
 }
 
 void RsaCrypt::encryptFile(std::string filename) {
+	cpp_bin_float_100 numOfBitsReal = boost::multiprecision::log2(cpp_bin_float_100(n));
+	cpp_bin_float_100 numOfBitsLow = floor(numOfBitsReal);
+	cpp_bin_float_100 numOfBitsHigh = ceil(numOfBitsReal);
+	cpp_int numOfBitsIn;
+	cpp_int numOfBitsOut;
 
-	double numOfBitsReal = log2(this->n);
-	std::cout << "numOfBits: " << numOfBitsReal << std::endl;
-	int numOfBitsLow = floor(numOfBitsReal);
-	int numOfBitsHigh = ceil(numOfBitsReal);
-	int numOfBitsIn;
-	int numOfBitsOut;
-	
-	numOfBitsIn = numOfBitsLow;
-	numOfBitsOut = numOfBitsHigh;
+	numOfBitsIn = cpp_int(numOfBitsLow);
+	numOfBitsOut = cpp_int(numOfBitsHigh);
 
 	BinReader in(filename);
 	BinWriter out("encrypted.bin");
 
 	while (in.isOpen()) {
 		bool end;
-		unsigned long long x = in.readNumOfBits(numOfBitsIn, end);
+		cpp_int x = in.readNumOfBits(numOfBitsIn, end);
 		if (end)
 			break;
 		x = modpow(x, this->e, this->n);
@@ -151,21 +153,21 @@ void RsaCrypt::encryptFile(std::string filename) {
 }
 
 void RsaCrypt::decryptFile(std::string filename) {
-	double numOfBitsReal = log2(this->n);
-	int numOfBitsLow = floor(numOfBitsReal);
-	int numOfBitsHigh = ceil(numOfBitsReal);
-	int numOfBitsIn;
-	int numOfBitsOut;
+	cpp_bin_float_100 numOfBitsReal = boost::multiprecision::log2(cpp_bin_float_100(n));
+	cpp_bin_float_100 numOfBitsLow = floor(numOfBitsReal);
+	cpp_bin_float_100 numOfBitsHigh = ceil(numOfBitsReal);
+	cpp_int numOfBitsIn;
+	cpp_int numOfBitsOut;
 
-	numOfBitsIn = numOfBitsLow;
-	numOfBitsOut = numOfBitsHigh;
+	numOfBitsIn = cpp_int(numOfBitsLow);
+	numOfBitsOut = cpp_int(numOfBitsHigh);
 
 	BinReader in("encrypted.bin");
 	BinWriter out(filename);
 
 	while (in.isOpen()) {
 		bool end;
-		unsigned long long x = in.readNumOfBits(numOfBitsOut, end);
+		cpp_int x = in.readNumOfBits(numOfBitsOut, end);
 		if (end)
 			break;
 		x = modpow(x, this->d, this->n);

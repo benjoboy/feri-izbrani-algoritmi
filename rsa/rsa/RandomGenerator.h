@@ -1,14 +1,18 @@
 #pragma once
+#include <boost/multiprecision/cpp_int.hpp>
+
+using namespace boost::multiprecision;
+
 class RandomGenerator
 {
 public:
 	RandomGenerator();
-	unsigned long long getRandom(unsigned long long min, unsigned long long max);
-	unsigned long long lcg();
-	unsigned long long m = 4294967295;
-	unsigned long long a = 69069;
-	unsigned long long b = 0;
-	unsigned long long rn = 1;
+	cpp_int getRandom(cpp_int min, cpp_int max);
+	cpp_int lcg();
+	cpp_int m = 4294967295;
+	cpp_int a = 69069;
+	cpp_int b = 0;
+	cpp_int rn = 1;
 };
 
 

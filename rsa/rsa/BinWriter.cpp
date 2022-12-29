@@ -9,13 +9,13 @@ BinWriter::BinWriter(std::string out) {
 	ofd.open(out, std::ios::binary);
 }
 
-BinWriter::~BinWriter(){
-	if (x>0) ofd.write(&var, 1);
+BinWriter::~BinWriter() {
+	if (x > 0) ofd.write(&var, 1);
 	ofd.close();
 }
 
 void BinWriter::writeBit(bool b) {
-	
+
 	if (x == 8) {
 		ofd.write(&var, 1);
 		x = 0; var = 0;
@@ -31,7 +31,7 @@ void BinWriter::writeBit(bool b) {
 }
 
 void BinWriter::writeByte(char b) {
-	for (int i = 7; i >=0; i--) {
+	for (int i = 7; i >= 0; i--) {
 		bool bit = b & 128 >> i;
 		writeBit(bit);
 	}
@@ -52,9 +52,11 @@ void BinWriter::setX(int i) {
 	x = i;
 }
 
-void BinWriter::writeNumOfBits(unsigned long long out, int numOfBits) {
-	for (int i = numOfBits - 1; i >= 0; i--) {
-		bool bit = (out >> i) & 1;
+void BinWriter::writeNumOfBits(cpp_int out, cpp_int numOfBits) {
+	for (cpp_int i = numOfBits - 1; i >= 0; i--) {
+		
+		bool bit = bit_test(out, unsigned(i));
+		
 		writeBit(bit);
 	}
 }
