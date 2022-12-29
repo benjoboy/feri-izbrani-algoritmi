@@ -61,7 +61,6 @@ void RsaCrypt::generateKeys(int keyLength) {
 		cpp_int e = primeGenerator.getRandom(1, phi - 1);
 		while (true) {
 			e = primeGenerator.getRandom(1, phi - 1);
-			std::cout << e << std::endl;
 			if (gcd(e, phi) == 1)
 				break;
 		}
