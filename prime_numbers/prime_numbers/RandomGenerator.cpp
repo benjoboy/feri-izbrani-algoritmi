@@ -15,5 +15,5 @@ unsigned long long RandomGenerator::lcg() {
 }
 
 unsigned long long RandomGenerator::getRandom(unsigned long long min, unsigned long long max) {
-	return  (min + lcg()) % (max - min + 1);
+	return  min + lcg() % (max - min + 1);
 }
