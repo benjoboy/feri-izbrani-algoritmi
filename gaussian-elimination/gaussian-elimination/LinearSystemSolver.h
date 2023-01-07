@@ -8,9 +8,11 @@ class LinearSystemSolver
 public:
 	LinearSystemSolver();
 	float* matrix;
+	float* A;
 	int size;
-	void gausElimination();
+	void gaussElimination();
 	void readMatix(string filename);
 	void printMatrix();
+	void printA();
 };
 
