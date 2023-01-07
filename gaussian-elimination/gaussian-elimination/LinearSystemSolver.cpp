@@ -22,38 +22,34 @@ void LinearSystemSolver::gaussElimination() {
 			}
 		}
 		if (m == -1 && (k + 1 < size -1)) {
-			//throw
 			cout << "Error: Matrix is singular" << m << endl;
 			return;
 		}
-		float mkVal = matrix[m * size + k];
-		cout << "m: " << m << "val: " << mkVal << endl;
+		double mkVal = matrix[m * size + k];
+		//cout << "m: " << m << "val: " << mkVal << endl;
 		for (int i = 0; i < size; i++) {
-			float temp = matrix[k * size + i];
+			double temp = matrix[k * size + i];
 			matrix[k * size + i] = matrix[m * size + i] / mkVal;
 			matrix[m * size + i] = temp;
 		}
 
 		for (int l = k + 1; l < size - 1; l++) {
-			float ikVal = matrix[l * size + k];
+			double ikVal = matrix[l * size + k];
 
 			for (int j = 0; j < size; j++) {
 				matrix[l * size + j] = matrix[l * size + j] - ikVal * matrix[k * size + j];
 			}
 		}
-		printMatrix();
+		//printMatrix();
 	}
-	/*if (matrix[size * size + size] == 0) {
-		cout << "Ann is zero\n";
-		return;
-	}*/
+	
 	if (matrix[(size - 1) * size - 1] == 0) {
 		cout << "Ann is zero\n";
 		return;
 	}
 	A[size - 2] = matrix[(size-2)*size + size - 1] / matrix[(size - 2) * size + size - 2];
 	for (int i = size-3; i >= 0; i--) {
-		float sum = 0;
+		double sum = 0;
 		for (int j = i + 1; j < size-1; j++) {
 			sum += matrix[i * size + j] * A[j];
 		}
@@ -67,8 +63,8 @@ void LinearSystemSolver::readMatix(string filename)
 	ifstream file(filename);
 	file >> size;
 	size++;
-	matrix = new float[(size - 1) * size];
-	A = new float[size-1];
+	matrix = new double[(size - 1) * size];
+	A = new double[size-1];
 
 	for (int i = 0; i < size - 1; i++)
 	{

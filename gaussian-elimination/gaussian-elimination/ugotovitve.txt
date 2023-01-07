@@ -1,0 +1,21 @@
+Pri onih dveh primerih je pri 32 bitnih floatih rezultat
+
+
+1		0
+1		1
+
+
+pri double pa je vedno 
+1		1
+1		1
+
+rezultat 1 1 je bolj pravilen ker je rezulata zelo blizu ena
+
+
+časovna zahtevnost O(n^3)
+
+n(n + 1)/2 deljenj, (2n3 + 3n2 − 5n)/6 množenj, and (2n3 + 3n2 − 5n)/6 odštevanj
+
+
+
+zelo numerično nestabilno. Zaradi možnega deljenja zelo manjnih števil
